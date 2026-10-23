@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PulseGuard AI | Intelligent API Monitoring & Alert System</title>
+  <meta name="description" content="AI-Powered API Health Monitoring & Anomaly Detection Dashboard. Proactively evaluates response times, HTTP statuses, and data integrity with LLM-generated incident alerts.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="dark-theme">
+  <!-- Top Navigation & System Status -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="brand-title-row">
+            <h1 class="brand-title">PulseGuard AI</h1>
+            <span class="badge badge-version">v1.0.0</span>
+          </div>
+          <p class="brand-subtitle">Intelligent API Health & Anomaly Alert System</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="system-status-indicator" id="system-status-badge">
+          <span class="status-dot"></span>
+          <span class="status-label" id="ai-engine-status">AI Engine: Heuristic/Gemini</span>
+        </div>
+
+        <button class="btn btn-secondary" id="btn-toggle-auto-refresh">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+          </svg>
+          <span id="auto-refresh-text">Auto-Refresh: ON (5s)</span>
+        </button>
+
+        <button class="btn btn-primary" id="btn-open-ingest-modal">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+          <span>Send / Monitor API</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-content">
+    <!-- Top Stats Cards -->
+    <section class="stats-grid" id="stats-section">
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <span class="stat-label">Monitored Calls</span>
+          <div class="stat-icon-wrapper icon-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+        </div>
+        <div class="stat-value" id="stat-total-monitored">0</div>
+        <div class="stat-footer">
+          <span class="stat-subtext">Across external healthcare APIs</span>
+        </div>
+      </div>
+
+      <div class="stat-card alert-highlight">
+        <div class="stat-card-header">
+          <span class="stat-label">Active Anomalies</span>
+          <div class="stat-icon-wrapper icon-red">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg>
+          </div>
+        </div>
+        <div class="stat-value text-danger" id="stat-active-anomalies">0</div>
+        <div class="stat-footer">
+          <span class="stat-badge badge-danger" id="stat-critical-count">0 Critical</span>
+          <span class="stat-subtext">Needs attention</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <span class="stat-label">Anomaly Rate</span>
+          <div class="stat-icon-wrapper icon-amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+          </div>
+        </div>
+        <div class="stat-value" id="stat-anomaly-rate">0.0%</div>
+        <div class="stat-footer">
+          <span class="stat-subtext">Deviation from expected SLA</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <span class="stat-label">Avg Response Time</span>
+          <div class="stat-icon-wrapper icon-purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+        </div>
+        <div class="stat-value" id="stat-avg-latency">0 <span class="unit">ms</span></div>
+        <div class="stat-footer">
+          <span class="stat-subtext">Threshold: &lt; 3,000ms</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Simulation & Scenario Control Bar -->
+    <section class="simulation-banner">
+      <div class="simulation-content">
+        <div class="simulation-info">
+          <div class="sparkle-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="simulation-title">Interactive Scenario Simulator & Quick Presets</h3>
+            <p class="simulation-desc">Simulate realistic external API incidents or inject the PDF test case to see AI anomaly detection and alert generation in action.</p>
+          </div>
+        </div>
+        <div class="simulation-actions">
+          <button class="btn btn-pill btn-highlight" id="btn-sim-pdf" title="Exact data from Technical Interview specification">
+            <span class="preset-tag">PDF Spec</span> Run Prompt Sample
+          </button>
+          <button class="btn btn-pill btn-danger" id="btn-sim-500">
+            500/503 Outage
+          </button>
+          <button class="btn btn-pill btn-warning" id="btn-sim-latency">
+            Latency Spike (>8s)
+          </button>
+          <button class="btn btn-pill btn-cyan" id="btn-sim-zero">
+            Zero Records
+          </button>
+          <button class="btn btn-pill btn-success" id="btn-sim-healthy">
+            Healthy Traffic
+          </button>
+          <button class="btn btn-pill btn-purple" id="btn-sim-chaotic">
+            Mixed Stream
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Alerts Section -->
+    <section class="alerts-section">
+      <div class="section-toolbar">
+        <div class="toolbar-left">
+          <h2 class="section-title">
+            Incident Alerts Feed
+            <span class="count-pill" id="alerts-count-pill">0</span>
+          </h2>
+          <!-- Filter Tabs -->
+          <div class="tab-group" id="status-tab-group">
+            <button class="tab active" data-status="ACTIVE" id="tab-active">Active</button>
+            <button class="tab" data-status="RESOLVED" id="tab-resolved">Resolved</button>
+            <button class="tab" data-status="ALL" id="tab-all">All Incidents</button>
+          </div>
+        </div>
+
+        <div class="toolbar-right">
+          <!-- Search Box -->
+          <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" id="input-search" placeholder="Search API name or incident...">
+          </div>
+
+          <!-- Severity Select -->
+          <select id="select-severity" class="form-select">
+            <option value="ALL">All Severities</option>
+            <option value="CRITICAL">Critical Only</option>
+            <option value="HIGH">High Only</option>
+            <option value="MEDIUM">Medium Only</option>
+            <option value="LOW">Low Only</option>
+          </select>
+
+          <!-- Upload File Button -->
+          <label class="btn btn-secondary file-upload-btn" title="Upload a static JSON file of API responses">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+            </svg>
+            <span>Upload JSON</span>
+            <input type="file" id="input-file-upload" accept=".json" style="display: none;">
+          </label>
+
+          <!-- Reset / Clear Button -->
+          <button class="btn btn-icon btn-ghost" id="btn-clear-db" title="Clear all alerts & metrics">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Alerts List Container -->
+      <div class="alerts-container" id="alerts-container">
+        <!-- Rendered dynamically via JavaScript -->
+        <div class="loading-state" id="loading-state">
+          <div class="spinner"></div>
+          <p>Loading API incident alerts...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal: Send / Monitor API Ingestion -->
+  <div class="modal-overlay" id="modal-ingest">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="icon-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          </div>
+          <div>
+            <h3 class="modal-title">Send API Monitoring Payload</h3>
+            <p class="modal-subtitle">Sends a direct POST request to endpoint: <code>/monitor</code></p>
+          </div>
+        </div>
+        <button class="btn-close" id="btn-close-modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p class="help-text">
+          Provide a single API metric object or an array of API response metrics. The anomaly detection engine will evaluate response time, status codes, and data payload integrity, then invoke the AI model for any detected issues.
+        </p>
+
+        <div class="code-editor-wrap">
+          <div class="editor-header">
+            <span>JSON Payload (POST /monitor)</span>
+            <button class="btn-text-link" id="btn-fill-pdf-sample">Load PDF Sample</button>
+          </div>
+          <textarea id="textarea-payload" rows="12" spellcheck="false" class="code-textarea"></textarea>
+        </div>
+
+        <div class="form-checkbox">
+          <input type="checkbox" id="checkbox-send-email">
+          <label for="checkbox-send-email">Trigger Email Alert Report (Section 7.4 Nodemailer / Ethereal preview)</label>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btn-cancel-modal">Cancel</button>
+        <button class="btn btn-primary" id="btn-submit-payload">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <span>Send to /monitor</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Raw Payload & Details Viewer -->
+  <div class="modal-overlay" id="modal-details">
+    <div class="modal-card modal-large">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="icon-circle icon-circle-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <div>
+            <h3 class="modal-title" id="details-modal-title">Incident Details & Payload</h3>
+            <p class="modal-subtitle" id="details-modal-subtitle">Raw telemetry and AI diagnostic breakdown</p>
+          </div>
+        </div>
+        <button class="btn-close" id="btn-close-details">&times;</button>
+      </div>
+
+      <div class="modal-body" id="details-modal-body">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btn-dismiss-details">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
