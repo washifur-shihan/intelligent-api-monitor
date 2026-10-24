@@ -28,6 +28,15 @@ async function bootstrap() {
       logger.info(`================================================================`);
     });
 
+    server.on('error', (err) => {
+      if (err.code === 'EADDRINUSE') {
+        logger.error(`❌ Port ${config.port} is already in use by another process. Please free port ${config.port} (run: lsof -ti :${config.port} | xargs kill -9) or set a different PORT in .env`);
+      } else {
+        logger.error('Server error', { error: err.message });
+      }
+      process.exit(1);
+    });
+
     // Graceful Shutdown
     const shutdown = () => {
       logger.info('Shutting down gracefully...');

@@ -26,8 +26,7 @@ Built for the **AI Engineer Technical Interview Assignment**, fulfilling 100% of
 - [10. Optional Feature: Email Anomaly Reports](#10-optional-feature-email-anomaly-reports)
 - [11. Testing & Validation](#11-testing--validation)
 - [12. AI Prompts Documentation (`AI_Prompts.docx`)](#12-ai-prompts-documentation-ai_promptsdocx)
-- [13. Video Explanation Guide](#13-video-explanation-guide)
-- [14. Evaluation Criteria Matrix](#14-evaluation-criteria-matrix)
+- [13. Evaluation Criteria Matrix](#13-evaluation-criteria-matrix)
 
 ---
 
@@ -394,16 +393,7 @@ npm run generate-docs
 
 ---
 
-## 13. Video Explanation Guide
-
-Section 11.3 requires a 5–10 minute video explanation covering architecture, system workflow, and key decisions.
-
-A detailed, minute-by-minute presentation guide with a spoken walkthrough script is provided in:
-👉 **[`VIDEO_EXPLANATION_GUIDE.md`](VIDEO_EXPLANATION_GUIDE.md)**
-
----
-
-## 14. Evaluation Criteria Matrix
+## 13. Evaluation Criteria Matrix
 
 | Evaluation Criteria | Implementation Details |
 | :--- | :--- |

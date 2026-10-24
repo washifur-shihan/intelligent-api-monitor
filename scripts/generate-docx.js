@@ -119,7 +119,7 @@ async function generateDocx() {
                 children: [
                   new TableCell({ children: [new Paragraph({ text: '9. Code Generation & Architecture' })] }),
                   new TableCell({ children: [new Paragraph({ text: 'Layered backend architecture (Express, Winston, Node-native SQLite, repository pattern, resilient fallback reasoning engine, modern dashboard UI).' })] }),
-                  new TableCell({ children: [new Paragraph({ text: 'Agentic pair programming, modular separation of concerns, test-driven validation.' })] }),
+                  new TableCell({ children: [new Paragraph({ text: 'Iterative prompt-assisted engineering, modular separation of concerns, test-driven validation.' })] }),
                 ],
               }),
             ],

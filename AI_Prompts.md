@@ -16,7 +16,7 @@ In accordance with Section 9 of the interview specification, this document catal
 | :--- | :--- | :--- |
 | **6.3 AI Alert Generation** | Evaluates API anomalies and generates human-readable incident summaries, root cause analyses, and actionable remediation steps. | Google Gemini 1.5 Flash / OpenAI GPT-4o-mini with structured JSON schema output, temperature 0.2, and deterministic schema enforcement. |
 | **9. Prompt Design** | Structured Site Reliability Engineer (SRE) persona, strict JSON schema output guardrails, few-shot calibration to match interview task specifications. | System instructions with strict JSON object output and field constraints. |
-| **9. Code Generation** | Architecture design, layered Express backend, native Node SQLite persistence, resilient fallback reasoning engine, and glassmorphism UI. | Agentic pair programming, test-driven validation, and modular decoupling. |
+| **9. Code Generation** | Architecture design, layered Express backend, native Node SQLite persistence, resilient fallback reasoning engine, and glassmorphism UI. | Iterative prompt-assisted engineering, test-driven validation, and modular decoupling. |
 | **9. Logic Building** | Multi-tier SLA thresholds (3,000ms warning, 5,000ms critical), HTTP status code matrix (2xx vs 4xx vs 5xx), and composite severity scoring. | Rule-based heuristics combined with LLM semantic reasoning. |
 
 ---
